@@ -4,34 +4,32 @@
 
 <h3>Países</h3>
 
-@if(Countries is null)
-{
-    <p>Cargando...</p>
-} else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th></th>
-                <th>País</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var country in Countries)
-            {
+<GenecList Mylist="Countries">
+    <Body>
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>
-                        <a class="btn btn-warning">Editar</a>
-                        <button class="btn btn-danger">Borrar</button>
-                    </td>
-                    <td>
-                        @country.Name
-                    </td>
+                    <th>Actions</th>
+                    <th>Country</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
+            </thead>
+            <tbody>
+                @foreach (var country in Countries!)
+                {
+                    <tr>
+                        <td>
+                            <a class="btn btn-warning">Edit</a>
+                            <button class="btn btn-danger">Delete</button>
+                        </td>
+                        <td>
+                            @country.Name
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Body>
+</GenecList>
 
 
 @code {
