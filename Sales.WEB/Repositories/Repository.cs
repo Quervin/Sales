@@ -36,7 +36,7 @@ namespace Sales.WEB.Repositories
             return new HttpResponseWrapper<object>(null, !responseHttp.IsSuccessStatusCode, responseHttp);
         }
 
-        public async Task<HttpResponseWrapper<TResponse>> Pos<T, TResponse>(string url, T model)
+        public async Task<HttpResponseWrapper<TResponse>> Post<T, TResponse>(string url, T model)
         {
             var messageJSON = JsonSerializer.Serialize(model);
             var messageContent = new StringContent(messageJSON, Encoding.UTF8, "application/json");
@@ -53,6 +53,33 @@ namespace Sales.WEB.Repositories
         {
             var responseString = await httpResponse.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(responseString, jsonSerializerOptions)!;
+        }
+
+        public async Task<HttpResponseWrapper<object>> Delete(string url)
+        {
+            var respopnseHTTP = await _httpClient.DeleteAsync(url);
+            return new HttpResponseWrapper<object>(null, !respopnseHTTP.IsSuccessStatusCode, respopnseHTTP);
+        }
+
+        public async Task<HttpResponseWrapper<object>> Put<T>(string url, T model)
+        {
+            var messageJSON = JsonSerializer.Serialize(model);
+            var messageContent = new StringContent(messageJSON, Encoding.UTF8, "application/json");
+            var responseHttp = await _httpClient.PutAsync(url, messageContent);
+            return new HttpResponseWrapper<object>(null, !responseHttp.IsSuccessStatusCode, responseHttp);
+        }
+
+        public async Task<HttpResponseWrapper<TResponse>> Put<T, TResponse>(string url, T model)
+        {
+            var messageJSON = JsonSerializer.Serialize(model);
+            var messageContent = new StringContent(messageJSON, Encoding.UTF8, "application/json");
+            var responseHttp = await _httpClient.PutAsync(url, messageContent);
+            if (responseHttp.IsSuccessStatusCode)
+            {
+                var response = await UnserialzeAnswer<TResponse>(responseHttp, _jsonSerializerOptions);
+                return new HttpResponseWrapper<TResponse>(response, false, responseHttp);
+            }
+            return new HttpResponseWrapper<TResponse>(default, !responseHttp.IsSuccessStatusCode, responseHttp);
         }
     }
 }
