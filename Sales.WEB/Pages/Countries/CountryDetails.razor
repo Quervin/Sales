@@ -1,23 +1,23 @@
-﻿@page "/states/details/{StateId:int}"
+﻿@page "/countries/details/{Id:int}"
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
 
-@if (state is null)
+@if (country is null)
 {
     <p>Cargando...</p>
 }
 else
 {
-    <h3>@state.Name</h3>
+    <h3>@country.Name</h3>
 
     <div class="mb-2" style="display: flex; flex-wrap:wrap; align-items: center;">
         <div>
-            <a class="btn btn-primary" href="/cities/create/@StateId">Nueva Ciudad</a>
-            <a class="btn btn-success" href="/countries/details/@state.CountryId">Regresar</a>
+            <a class="btn btn-primary" href="/states/create/@country.Id">Nuevo Estado/Departamento</a>
+            <a class="btn btn-success" href="/countries">Regresar</a>
         </div>
         <div class="mx-2">
-            <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar ciudad..." @bind-value="Filter" />
+            <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar estado/departamento..." @bind-value="Filter" />
         </div>
         <div>
             <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync">Filtrar</button>
@@ -30,25 +30,30 @@ else
                 TotalPages="totalPages"
                 SelectedPage="SelectedPageAsync" />
 
-    <GenecList Mylist="cities!">
+    <GenecList Mylist="states!">
         <Body>
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Cuidad</th>
-                        <th style="width:180px"></th>
+                        <th>Estado / Departamentos</th>
+                        <th style="width:220px">Cuidates</th>
+                        <th style="width:220px"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var city in cities!)
+                    @foreach (var state in states!)
                     {
                         <tr>
                             <td>
-                                @city.Name
+                                @state.Name
                             </td>
                             <td>
-                                <a class="btn btn-warning" href="/cities/edit/@city.Id">Editar</a>
-                                <button class="btn btn-danger" @onclick=@(() => DeleteAsync(city.Id))>Borrar</button>
+                                @state.CitiesNumber
+                            </td>
+                            <td>
+                                <a class="btn btn-info" href="/states/details/@state.Id">Detalles</a>
+                                <a class="btn btn-warning" href="/states/edit/@state.Id">Editar</a>
+                                <button class="btn btn-danger" @onclick=@(() => DeleteAsync(state.Id))>Borrar</button>
                             </td>
                         </tr>
                     }
@@ -59,14 +64,13 @@ else
 }
 
 @code {
-    private State? state;
-    private List<City>? cities;
-    private int currentPage = 1;
-    private int totalPages;
-
+    private Country? country;
+    private List<State>? states;
+    public int currentPage = 1;
+    public int totalPages;
 
     [Parameter]
-    public int StateId { get; set; }
+    public int Id { get; set; }
 
     [Parameter]
     [SupplyParameterFromQuery]
@@ -88,7 +92,6 @@ else
         await LoadAsync(page);
     }
 
-
     private async Task LoadAsync(int page = 1)
     {
         if (!string.IsNullOrWhiteSpace(Page))
@@ -101,24 +104,24 @@ else
 
         if (string.IsNullOrEmpty(Filter))
         {
-            url1 = $"v1/api/cities?id={StateId}&page={page}";
-            url2 = $"v1/api/cities/totalPages?id={StateId}";
+            url1 = $"v1/api/states/?id={Id}&page={page}";
+            url2 = $"v1/api/states/totalPages?id={Id}";
         }
         else
         {
-            url1 = $"v1/api/cities?id={StateId}&page={page}&filter={Filter}";
-            url2 = $"v1/api/cities/totalPages?id={StateId}&filter={Filter}";
+            url1 = $"v1/api/states?id={Id}&page={page}&filter={Filter}";
+            url2 = $"v1/api/states/totalPages?id={Id}&filter={Filter}";
         }
 
-        var responseHppt1 = await repository.Get<State>($"v1/api/states/{StateId}");
-        var responseHppt2 = await repository.Get<List<City>>(url1);
-        var responseHppt3 = await repository.Get<int>(url2);
-        state = responseHppt1.Response;
-        cities = responseHppt2.Response;
-        totalPages = responseHppt3.Response;
+        var responseHttp1 = await repository.Get<Country>($"v1/api/countries/{Id}");
+        var responseHttp2 = await repository.Get<List<State>>(url1);
+        var responseHttp3 = await repository.Get<int>(url2);
+        country = responseHttp1.Response;
+        states = responseHttp2.Response;
+        totalPages = responseHttp3.Response;
     }
 
-    private async Task DeleteAsync(int CityId)
+    private async Task DeleteAsync(int StateId)
     {
         var result = await sweetAlertService.FireAsync(new SweetAlertOptions
             {
@@ -136,7 +139,7 @@ else
             return;
         }
 
-        var responseHttp = await repository.Delete($"v1/api/cities/{CityId}");
+        var responseHttp = await repository.Delete($"v1/api/states/{StateId}");
         if (responseHttp.Error)
         {
             if (responseHttp.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)
