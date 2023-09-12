@@ -18,7 +18,6 @@ namespace Sales.API.Controllers
             _context = context;
         }
 
-
         [HttpGet]
         public async Task<ActionResult> Get([FromQuery] PaginationDTO pagination)
         {
@@ -37,7 +36,6 @@ namespace Sales.API.Controllers
                 .ToListAsync());
         }
 
-
         [HttpGet("totalPages")]
         public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
         {
@@ -55,6 +53,21 @@ namespace Sales.API.Controllers
             return Ok(totalPages);
         }
 
+        [HttpGet("totalCities")]
+        public async Task<ActionResult> GetTotalCities([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.Cities
+                .Where(x => x.State!.Id == pagination.Id)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+
+            double totalCities = await queryable.CountAsync();
+            return Ok(totalCities);
+        }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAsync(int id)

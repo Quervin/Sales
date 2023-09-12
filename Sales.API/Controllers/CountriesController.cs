@@ -50,6 +50,20 @@ namespace Sales.API.Controllers
             double count = await queryable.CountAsync();
             double totalPages = Math.Ceiling(count / pagination.RecordsNumber);
             return Ok(totalPages);
+        }   
+        
+        [HttpGet("totalCountries")]
+        public async Task<ActionResult> GetTotalCountries([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.Countries.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+
+            double totalCountries = await queryable.CountAsync();
+            return Ok(totalCountries);
         }
         
         [HttpGet("full")]
