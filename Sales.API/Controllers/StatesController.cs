@@ -52,8 +52,8 @@ namespace Sales.API.Controllers
             double count = await queryable.CountAsync();
             double totalPages = Math.Ceiling(count / pagination.RecordsNumber);
             return Ok(totalPages);
-        } 
-        
+        }
+
         [HttpGet("totalStates")]
         public async Task<ActionResult> GetTotalStates([FromQuery] PaginationDTO pagination)
         {
@@ -135,7 +135,7 @@ namespace Sales.API.Controllers
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var state = await _context.States
-                .Include(x=> x.Cities)
+                .Include(x => x.Cities)
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (state == null)
             {

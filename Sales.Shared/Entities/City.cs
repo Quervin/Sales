@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Sales.Shared.Entities
 {
-    public  class City
+    public class City
     {
         public int Id { get; set; }
 
@@ -20,5 +14,7 @@ namespace Sales.Shared.Entities
         public int StateId { get; set; }
 
         public State? State { get; set; }
+
+        public ICollection<User>? Users { get; set; }
     }
 }

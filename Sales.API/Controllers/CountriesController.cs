@@ -4,7 +4,6 @@ using Sales.API.Data;
 using Sales.API.Helpers;
 using Sales.Shared.DTOs;
 using Sales.Shared.Entities;
-using System.Linq;
 
 namespace Sales.API.Controllers
 {
@@ -50,8 +49,8 @@ namespace Sales.API.Controllers
             double count = await queryable.CountAsync();
             double totalPages = Math.Ceiling(count / pagination.RecordsNumber);
             return Ok(totalPages);
-        }   
-        
+        }
+
         [HttpGet("totalCountries")]
         public async Task<ActionResult> GetTotalCountries([FromQuery] PaginationDTO pagination)
         {
@@ -65,7 +64,7 @@ namespace Sales.API.Controllers
             double totalCountries = await queryable.CountAsync();
             return Ok(totalCountries);
         }
-        
+
         [HttpGet("full")]
         public async Task<IActionResult> GetFullAsync()
         {
