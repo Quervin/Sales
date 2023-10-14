@@ -27,7 +27,6 @@ namespace Sales.API.Data
             await CheckCategoriesAsync();
             await CheckRolesAsync();
             await CheckUserAsync("1010", "Ker", "Moya", "kermoya39@gmail.com", "322 311 4620", "Calle Luna Calle Sol", UserType.Admin);
-
         }
 
         private async Task CheckCategoriesAsync()
@@ -40,7 +39,6 @@ namespace Sales.API.Data
             }
 
             await _context.SaveChangesAsync();
-
         }
 
         private async Task<User> CheckUserAsync(string document, string firstName, string lastName, string email, string phone, string address, UserType userType)
